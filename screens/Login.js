@@ -33,16 +33,7 @@ export default function LoginScreen() {
     }
   };
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
 
-  const renderPasswordAccessory = () => (
-    <IconButton
-      icon={showPassword ? 'eye-off' : 'eye'}
-      onPress={toggleShowPassword}
-    />
-  );
 
   const handleForgotPassword = () => {
     navigation.navigate('ForgotPassword');
@@ -76,11 +67,6 @@ export default function LoginScreen() {
         value={password}
         onChangeText={setPassword}
         onBlur={() => setPasswordFilled(true)}
-        renderRightAccessory={renderPasswordAccessory}
-      />
-      <IconButton
-        icon={showPassword ? 'eye-off' : 'eye'}
-        onPress={toggleShowPassword}
       />
       {emailFilled && !email && (
       <Text style={styles.errorText}>Email is required</Text>
