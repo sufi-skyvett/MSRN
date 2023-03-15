@@ -2,17 +2,47 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import { IconButton } from 'react-native-paper';
 
 export default function LoginScreen() {
   const navigation = useNavigation();
 
+  const [emailFilled, setEmailFilled] = useState(false);
+  const [passwordFilled, setPasswordFilled] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // handle login logic
+    if (!email || !password) {
+      // email or password is not filled, show error message
+      setEmailFilled(true);
+      setPasswordFilled(true);
+      return;
+    }
+    
+    // email and password are filled, handle login logic here
+    // Check if the email and password are correct
+    if (email === 'min@admin.com' && password === 'abc123') {
+      // Navigate to the Dashboard screen
+      navigation.navigate('Dashboard');
+    } else {
+      // Show an error message for an incorrect email or password
+      alert('Incorrect email or password');
+    }
   };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const renderPasswordAccessory = () => (
+    <IconButton
+      icon={showPassword ? 'eye-off' : 'eye'}
+      onPress={toggleShowPassword}
+    />
+  );
 
   const handleForgotPassword = () => {
     navigation.navigate('ForgotPassword');
@@ -32,18 +62,32 @@ export default function LoginScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>MSRN</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, emailFilled && !email && styles.inputError]}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        onBlur={() => setEmailFilled(true)}
       />
+
       <TextInput
-        style={styles.input}
+        style={[styles.input, passwordFilled && !password && styles.inputError]}
         placeholder="Password"
-        secureTextEntry
+        secureTextEntry={!showPassword}
         value={password}
         onChangeText={setPassword}
+        onBlur={() => setPasswordFilled(true)}
+        renderRightAccessory={renderPasswordAccessory}
       />
+      <IconButton
+        icon={showPassword ? 'eye-off' : 'eye'}
+        onPress={toggleShowPassword}
+      />
+      {emailFilled && !email && (
+      <Text style={styles.errorText}>Email is required</Text>
+      )}
+      {passwordFilled && !password && (
+        <Text style={styles.errorText}>Password is required</Text>
+      )}
       <View style={styles.row}>
         <TouchableOpacity onPress={handleRememberMe}>
           {rememberMe ? (
@@ -107,6 +151,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '80%',
     marginBottom: 16,
+  },
+  inputError: {
+    borderBottomColor: "red",
+    borderBottomWidth: 2,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 5,
   },
   rememberMeText: {
     color: '#007AFF',
